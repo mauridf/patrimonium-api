@@ -34,21 +34,27 @@ public class PropertyService {
                 .name(request.name())
                 .type(request.type())
                 .purpose(request.purpose())
+                .category(request.category())
 
                 .address(request.address())
+                .number(request.number())
                 .city(request.city())
                 .state(request.state())
                 .zipCode(request.zipCode())
 
                 .bedrooms(request.bedrooms())
                 .bathrooms(request.bathrooms())
-                .garageSpots(request.garageSpots())
-                .areaTotal(request.areaTotal())
-                .areaBuilt(request.areaBuilt())
+                .suites(request.suites())
+                .parkingSpots(request.parkingSpots())
+                .totalArea(request.totalArea())
+                .builtArea(request.builtArea())
+                .floor(request.floor())
                 .furnished(request.furnished())
 
-                .valueSale(request.valueSale())
-                .valueRent(request.valueRent())
+                .estimatedValue(request.estimatedValue())
+                .rentValue(request.rentValue())
+                .condoFee(request.condoFee())
+                .iptu(request.iptu())
 
                 .description(request.description())
                 .build();
@@ -72,23 +78,29 @@ public class PropertyService {
                 p.getId(),
                 p.getName(),
                 p.getType(),
+                p.getCategory(),
                 p.getPurpose(),
 
                 p.getAddress(),
+                p.getNumber(),
                 p.getCity(),
                 p.getState(),
                 p.getZipCode(),
 
                 p.getBedrooms(),
                 p.getBathrooms(),
-                p.getGarageSpots(),
-                p.getAreaTotal(),
-                p.getAreaBuilt(),
+                p.getSuites(),
+                p.getParkingSpots(),
+                p.getTotalArea(),
+                p.getBuiltArea(),
+                p.getFloor(),
                 p.getFurnished(),
 
-                p.getValueSale(),
-                p.getValueRent(),
-
+                p.getAvailableForSale(),
+                p.getAvailableForRent(),
+                p.getCondoFee(),
+                p.getIptu(),
+                p.getActive(),
                 p.getDescription(),
                 p.getCreatedAt()
         );
