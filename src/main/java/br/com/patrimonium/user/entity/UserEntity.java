@@ -29,6 +29,9 @@ public class UserEntity {
 
     private Boolean active;
 
+    @Column(nullable = false)
+    private String role;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
@@ -36,6 +39,7 @@ public class UserEntity {
     public void prePersist() {
         this.id = UUID.randomUUID();
         this.active = true;
+        this.role = "USER";
         this.createdAt = LocalDateTime.now();
     }
 }

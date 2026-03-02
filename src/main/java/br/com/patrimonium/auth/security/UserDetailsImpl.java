@@ -13,11 +13,13 @@ public class UserDetailsImpl implements UserDetails {
     private final UUID id;
     private final String email;
     private final String password;
+    private final String role;
 
     public UserDetailsImpl(UserEntity user) {
         this.id = user.getId();
         this.email = user.getEmail();
         this.password = user.getPassword();
+        this.role = user.getRole();
     }
 
     public UUID getId() {
@@ -26,7 +28,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(); // depois entra roles
+        return List.of(() -> "ROLE_" + role);
     }
 
     @Override

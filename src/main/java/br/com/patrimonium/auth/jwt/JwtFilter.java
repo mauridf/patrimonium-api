@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
@@ -32,16 +33,18 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if (header != null && header.startsWith("Bearer ")) {
             String token = header.substring(7);
+
             try {
                 Claims claims = jwtService.validateToken(token);
                 String email = claims.get("email", String.class);
+                String role = claims.get("role", String.class);
 
                 var userDetails = userDetailsService.loadUserByUsername(email);
-
+                var authorities = List.of(() -> "ROLE_" + role);
                 var auth = new UsernamePasswordAuthenticationToken(
                         userDetails,
                         null,
-                        userDetails.getAuthorities()
+                        authorities
                 );
 
                 SecurityContextHolder.getContext().setAuthentication(auth);
