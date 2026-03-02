@@ -26,8 +26,11 @@ public class SecurityConfig {
                         // Actuator
                         .requestMatchers("/actuator/**").permitAll()
 
-                        // Public endpoints
-                        .requestMatchers("/api/v1/users").permitAll() // temporário até JWT
+                        // Auth
+                        .requestMatchers("/api/v1/auth/**").permitAll()
+
+                        // User create
+                        .requestMatchers("/api/v1/users").permitAll()
 
                         // resto protegido
                         .anyRequest().authenticated()

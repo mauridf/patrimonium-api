@@ -5,6 +5,7 @@ import br.com.patrimonium.user.dto.UserResponse;
 import br.com.patrimonium.user.entity.UserEntity;
 import br.com.patrimonium.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -12,12 +13,13 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository repository;
+    private final BCryptPasswordEncoder encoder;
 
     public UserResponse create(UserCreateRequest request) {
 
         UserEntity user = UserEntity.builder()
                 .email(request.email())
-                .password(request.password()) // depois entra criptografia
+                .password(encoder.encode(request.password()))
                 .name(request.name())
                 .build();
 
