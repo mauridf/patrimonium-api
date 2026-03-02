@@ -1,0 +1,17 @@
+ALTER TABLE properties
+ADD COLUMN city VARCHAR(100),
+ADD COLUMN state VARCHAR(2),
+ADD COLUMN zip_code VARCHAR(20),
+
+ADD COLUMN bedrooms INT,
+ADD COLUMN bathrooms INT,
+ADD COLUMN garage_spots INT,
+
+ADD COLUMN area_total NUMERIC(10,2),
+ADD COLUMN area_built NUMERIC(10,2),
+
+ADD COLUMN furnished BOOLEAN DEFAULT FALSE,
+ADD COLUMN description TEXT,
+
+ADD COLUMN value_sale NUMERIC(15,2),
+ADD COLUMN value_rent NUMERIC(15,2);

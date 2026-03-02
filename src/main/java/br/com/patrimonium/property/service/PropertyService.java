@@ -10,7 +10,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -19,52 +18,79 @@ public class PropertyService {
     private final PropertyRepository repository;
     private final UserRepository userRepository;
 
-    public PropertyResponse create(PropertyCreateRequest request) {
-
+    private UserEntity getLoggedUser() {
         var auth = SecurityContextHolder.getContext().getAuthentication();
         var email = auth.getName();
+        return userRepository.findByEmail(email).orElseThrow();
+    }
 
-        UserEntity user = userRepository.findByEmail(email)
-                .orElseThrow();
+    public PropertyResponse create(PropertyCreateRequest request) {
+
+        UserEntity user = getLoggedUser();
 
         PropertyEntity property = PropertyEntity.builder()
                 .owner(user)
+
                 .name(request.name())
                 .type(request.type())
                 .purpose(request.purpose())
+
                 .address(request.address())
+                .city(request.city())
+                .state(request.state())
+                .zipCode(request.zipCode())
+
+                .bedrooms(request.bedrooms())
+                .bathrooms(request.bathrooms())
+                .garageSpots(request.garageSpots())
+                .areaTotal(request.areaTotal())
+                .areaBuilt(request.areaBuilt())
+                .furnished(request.furnished())
+
+                .valueSale(request.valueSale())
+                .valueRent(request.valueRent())
+
+                .description(request.description())
                 .build();
 
         var saved = repository.save(property);
 
-        return new PropertyResponse(
-                saved.getId(),
-                saved.getName(),
-                saved.getType(),
-                saved.getPurpose(),
-                saved.getAddress(),
-                saved.getCreatedAt()
-        );
+        return map(saved);
     }
 
     public List<PropertyResponse> listMyProperties() {
-
-        var auth = SecurityContextHolder.getContext().getAuthentication();
-        var email = auth.getName();
-
-        UserEntity user = userRepository.findByEmail(email)
-                .orElseThrow();
+        UserEntity user = getLoggedUser();
 
         return repository.findByOwnerId(user.getId())
                 .stream()
-                .map(p -> new PropertyResponse(
-                        p.getId(),
-                        p.getName(),
-                        p.getType(),
-                        p.getPurpose(),
-                        p.getAddress(),
-                        p.getCreatedAt()
-                ))
+                .map(this::map)
                 .toList();
+    }
+
+    private PropertyResponse map(PropertyEntity p) {
+        return new PropertyResponse(
+                p.getId(),
+                p.getName(),
+                p.getType(),
+                p.getPurpose(),
+
+                p.getAddress(),
+                p.getCity(),
+                p.getState(),
+                p.getZipCode(),
+
+                p.getBedrooms(),
+                p.getBathrooms(),
+                p.getGarageSpots(),
+                p.getAreaTotal(),
+                p.getAreaBuilt(),
+                p.getFurnished(),
+
+                p.getValueSale(),
+                p.getValueRent(),
+
+                p.getDescription(),
+                p.getCreatedAt()
+        );
     }
 }
