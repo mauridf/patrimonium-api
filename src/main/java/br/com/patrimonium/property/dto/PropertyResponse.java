@@ -1,5 +1,7 @@
 package br.com.patrimonium.property.dto;
 
+import br.com.patrimonium.property.enums.*;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -7,9 +9,9 @@ import java.util.UUID;
 public record PropertyResponse(
         UUID id,
         String name,
-        String type,
-        String purpose,
-        String category,
+        PropertyType type,
+        PropertyPurpose purpose,
+        PropertyCategory category,
 
         String address,
         String number,

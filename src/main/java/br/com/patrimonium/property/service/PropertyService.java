@@ -19,9 +19,17 @@ public class PropertyService {
     private final UserRepository userRepository;
 
     private UserEntity getLoggedUser() {
-        var auth = SecurityContextHolder.getContext().getAuthentication();
-        var email = auth.getName();
-        return userRepository.findByEmail(email).orElseThrow();
+
+        var context = SecurityContextHolder.getContext();
+
+        if (context == null || context.getAuthentication() == null) {
+            throw new RuntimeException("Usuário não autenticado");
+        }
+
+        var email = context.getAuthentication().getName();
+
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
     }
 
     public PropertyResponse create(PropertyCreateRequest request) {
@@ -74,12 +82,13 @@ public class PropertyService {
     }
 
     private PropertyResponse map(PropertyEntity p) {
+
         return new PropertyResponse(
                 p.getId(),
                 p.getName(),
                 p.getType(),
-                p.getCategory(),
                 p.getPurpose(),
+                p.getCategory(),
 
                 p.getAddress(),
                 p.getNumber(),
@@ -95,13 +104,14 @@ public class PropertyService {
                 p.getBuiltArea(),
                 p.getFloor(),
                 p.getFurnished(),
+                p.getDescription(),
 
-                p.getAvailableForSale(),
-                p.getAvailableForRent(),
+                p.getEstimatedValue(),
+                p.getRentValue(),
                 p.getCondoFee(),
                 p.getIptu(),
-                p.getActive(),
-                p.getDescription(),
+                p.getAvailableForRent(),
+                p.getAvailableForSale(),
                 p.getCreatedAt()
         );
     }

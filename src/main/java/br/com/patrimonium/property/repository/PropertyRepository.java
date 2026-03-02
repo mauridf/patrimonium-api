@@ -7,5 +7,8 @@ import java.util.List;
 import java.util.UUID;
 
 public interface PropertyRepository extends JpaRepository<PropertyEntity, UUID> {
-    List<PropertyEntity> findByOwnerId(UUID ownerId);
+
+    List<PropertyEntity> findByOwnerId(UUID userId);
+
+    List<PropertyEntity> findByCityAndState(String city, String state);
 }

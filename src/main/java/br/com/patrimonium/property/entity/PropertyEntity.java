@@ -8,6 +8,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import br.com.patrimonium.property.enums.*;
+
 @Entity
 @Table(name = "properties")
 @Getter
@@ -28,9 +30,16 @@ public class PropertyEntity {
     private String name;                 // Nome do imóvel
 
     // Classificação
-    private String type;                 // RESIDENCIAL, COMERCIAL, TEMPORADA
-    private String purpose;              // LOCACAO, VENDA, AMBOS
-    private String category;             // CASA, APARTAMENTO, SALA, TERRENO, GALPÃO
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PropertyType type;                 // RESIDENCIAL, COMERCIAL, TEMPORADA
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PropertyPurpose purpose;              // LOCACAO, VENDA, AMBOS
+
+    @Enumerated(EnumType.STRING)
+    private PropertyCategory category;            // CASA, APARTAMENTO, SALA, TERRENO, GALPÃO
 
     // Localização
     private String address;

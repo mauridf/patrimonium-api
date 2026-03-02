@@ -1,12 +1,13 @@
 package br.com.patrimonium.property.dto;
 
 import java.math.BigDecimal;
+import br.com.patrimonium.property.enums.*;
 
 public record PropertyCreateRequest(
         String name,
-        String type,
-        String purpose,
-        String category,
+        PropertyType type,
+        PropertyPurpose purpose,
+        PropertyCategory category,
 
         String address,
         String number,
