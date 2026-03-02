@@ -3,12 +3,14 @@ package br.com.patrimonium.property.controller;
 import br.com.patrimonium.property.dto.*;
 import br.com.patrimonium.property.service.PropertyService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/properties")
+@PreAuthorize("hasAnyRole('ADMIN','OWNER','USER')")
 @RequiredArgsConstructor
 public class PropertyController {
 
