@@ -18,7 +18,9 @@ public class TransactionResponse {
     private BigDecimal amount;
     private TransactionType type;
     private LocalDate transactionDate;
+    private LocalDate paymentDate;
     private String description;
+    private Boolean paid;
 
     public static TransactionResponse from(FinancialTransaction t) {
         return TransactionResponse.builder()

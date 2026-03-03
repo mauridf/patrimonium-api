@@ -11,6 +11,11 @@ import br.com.patrimonium.transaction.repository.FinancialTransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+
 import java.math.BigDecimal;
 import java.util.UUID;
 
@@ -56,5 +61,35 @@ public class FinancialTransactionService {
         }
 
         return avgMonthly.multiply(BigDecimal.valueOf(12));
+    }
+
+    public Page<TransactionResponse> list(
+            UUID propertyId,
+            int page,
+            int size
+    ) {
+
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                Sort.by(Sort.Direction.DESC, "transactionDate")
+        );
+
+        return repository
+                .findByPropertyId(propertyId, pageable)
+                .map(this::toResponse);
+    }
+
+    private TransactionResponse toResponse(FinancialTransaction entity) {
+        return TransactionResponse.builder()
+                .id(entity.getId())
+                .propertyId(entity.getProperty().getId())
+                .amount(entity.getAmount())
+                .type(entity.getType())
+                .transactionDate(entity.getTransactionDate())
+                .paymentDate(entity.getPaymentDate())
+                .description(entity.getDescription())
+                .paid(entity.getPaid())
+                .build();
     }
 }
