@@ -10,6 +10,7 @@ import br.com.patrimonium.person.entity.PersonEntity;
 import br.com.patrimonium.person.repository.PersonRepository;
 import br.com.patrimonium.property.repository.PropertyRepository;
 import br.com.patrimonium.transaction.entity.FinancialTransaction;
+import br.com.patrimonium.transaction.enums.TransactionType;
 import br.com.patrimonium.transaction.repository.FinancialTransactionRepository;
 import br.com.patrimonium.user.entity.UserEntity;
 import br.com.patrimonium.user.repository.UserRepository;
@@ -89,7 +90,7 @@ public class ContractService {
                 FinancialTransaction tx = FinancialTransaction.builder()
                         .property(contract.getProperty())
                         .amount(contract.getMonthlyValue())
-                        .type("INCOME")
+                        .type(TransactionType.INCOME)
                         .transactionDate(current)
                         .description("Rent - Contract " + contract.getId())
                         .build();

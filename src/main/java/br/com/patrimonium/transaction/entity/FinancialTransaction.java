@@ -43,6 +43,8 @@ public class FinancialTransaction {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    private Boolean paid;
+
     @PrePersist
     public void prePersist() {
         this.id = UUID.randomUUID();

@@ -6,6 +6,7 @@ import br.com.patrimonium.property.service.PropertyFinancialCalculator;
 import br.com.patrimonium.transaction.dto.TransactionCreateRequest;
 import br.com.patrimonium.transaction.dto.TransactionResponse;
 import br.com.patrimonium.transaction.entity.FinancialTransaction;
+import br.com.patrimonium.transaction.enums.TransactionType;
 import br.com.patrimonium.transaction.repository.FinancialTransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,11 +28,14 @@ public class FinancialTransactionService {
                 .orElseThrow(() -> new RuntimeException("Property not found"));
 
         FinancialTransaction transaction = FinancialTransaction.builder()
+                .id(UUID.randomUUID())
                 .property(property)
                 .amount(request.getAmount())
-                .type(request.getType())
+                .type(TransactionType.INCOME)
                 .transactionDate(request.getTransactionDate())
+                .paymentDate(request.getPaymentDate())
                 .description(request.getDescription())
+                .paid(false)
                 .build();
 
         repository.save(transaction);

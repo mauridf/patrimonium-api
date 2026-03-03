@@ -88,4 +88,12 @@ public interface FinancialTransactionRepository
         AND t.paymentDate >= CURRENT_DATE - 180
     """)
     BigDecimal averageLast6Months(UUID propertyId);
+
+    @Query("""
+    SELECT COALESCE(SUM(m.cost),0)
+    FROM MaintenanceEntity m
+    WHERE m.property.id = :propertyId
+    AND m.status = 'DONE'
+""")
+    BigDecimal sumByProperty(UUID propertyId);
 }

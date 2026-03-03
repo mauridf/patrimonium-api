@@ -13,5 +13,6 @@ public class TransactionCreateRequest {
     private BigDecimal amount;
     private String type;
     private LocalDate transactionDate;
+    private LocalDate paymentDate;
     private String description;
 }
