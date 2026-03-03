@@ -1,6 +1,7 @@
 package br.com.patrimonium.transaction.entity;
 
 import br.com.patrimonium.property.entity.PropertyEntity;
+import br.com.patrimonium.transaction.enums.TransactionStatus;
 import br.com.patrimonium.transaction.enums.TransactionType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -22,6 +23,10 @@ public class FinancialTransaction {
     @Id
     private UUID id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reference_transaction_id")
+    private FinancialTransaction referenceTransaction;
+
     @ManyToOne
     @JoinColumn(name = "property_id", nullable = false)
     private PropertyEntity property;
@@ -33,10 +38,14 @@ public class FinancialTransaction {
     @Column(nullable = false)
     private TransactionType type; // INCOME ou EXPENSE
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TransactionStatus status;
+
     @Column(name = "transaction_date", nullable = false)
     private LocalDate transactionDate;
 
-    @Column(name = "payment_date", nullable = false)
+    @Column(name = "payment_date")
     private LocalDate paymentDate;
 
     private String description;

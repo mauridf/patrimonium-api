@@ -1,6 +1,7 @@
 package br.com.patrimonium.transaction.repository;
 
 import br.com.patrimonium.transaction.entity.FinancialTransaction;
+import br.com.patrimonium.transaction.enums.TransactionType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,6 +18,8 @@ public interface FinancialTransactionRepository
         extends JpaRepository<FinancialTransaction, UUID> {
 
     Page<FinancialTransaction> findByPropertyId(UUID propertyId, Pageable pageable);
+
+    boolean existsByReferenceTransactionIdAndType(UUID referenceId, TransactionType type);
 
     @Query("""
         SELECT SUM(t.amount)

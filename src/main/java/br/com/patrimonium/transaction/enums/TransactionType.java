@@ -2,5 +2,9 @@ package br.com.patrimonium.transaction.enums;
 
 public enum TransactionType {
     INCOME,
-    EXPENSE
+    RENT,
+    EXPENSE,
+    MAINTENANCE,
+    PENALTY,
+    INTEREST
 }

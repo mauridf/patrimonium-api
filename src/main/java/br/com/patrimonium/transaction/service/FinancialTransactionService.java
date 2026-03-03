@@ -8,8 +8,10 @@ import br.com.patrimonium.property.service.PropertyFinancialCalculator;
 import br.com.patrimonium.transaction.dto.TransactionCreateRequest;
 import br.com.patrimonium.transaction.dto.TransactionResponse;
 import br.com.patrimonium.transaction.entity.FinancialTransaction;
+import br.com.patrimonium.transaction.enums.TransactionStatus;
 import br.com.patrimonium.transaction.enums.TransactionType;
 import br.com.patrimonium.transaction.repository.FinancialTransactionRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Service
@@ -96,5 +99,49 @@ public class FinancialTransactionService {
                 .description(entity.getDescription())
                 .paid(entity.getPaid())
                 .build();
+    }
+
+    @Transactional
+    public void createPenalty(FinancialTransaction original,
+                              BigDecimal amount) {
+
+        if (repository.existsByReferenceTransactionIdAndType(
+                original.getId(), TransactionType.PENALTY)) {
+            return;
+        }
+
+        FinancialTransaction penalty = FinancialTransaction.builder()
+                .property(original.getProperty())
+                .amount(amount)
+                .type(TransactionType.PENALTY)
+                .status(TransactionStatus.PENDING)
+                .transactionDate(LocalDate.now())
+                .referenceTransaction(original)
+                .description("Multa por atraso")
+                .build();
+
+        repository.save(penalty);
+    }
+
+    @Transactional
+    public void createInterest(FinancialTransaction original,
+                               BigDecimal amount) {
+
+        if (repository.existsByReferenceTransactionIdAndType(
+                original.getId(), TransactionType.INTEREST)) {
+            return;
+        }
+
+        FinancialTransaction interest = FinancialTransaction.builder()
+                .property(original.getProperty())
+                .amount(amount)
+                .type(TransactionType.INTEREST)
+                .status(TransactionStatus.PENDING)
+                .transactionDate(LocalDate.now())
+                .referenceTransaction(original)
+                .description("Juros por atraso")
+                .build();
+
+        repository.save(interest);
     }
 }
