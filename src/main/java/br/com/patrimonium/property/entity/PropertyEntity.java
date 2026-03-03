@@ -6,6 +6,8 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import br.com.patrimonium.property.enums.*;
@@ -90,6 +92,9 @@ public class PropertyEntity {
     private BigDecimal roi;
     @Column(precision = 10, scale = 6)
     private BigDecimal yield;
+
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PropertyImage> images = new ArrayList<>();
 
     @PrePersist
     public void prePersist() {
