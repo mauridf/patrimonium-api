@@ -55,4 +55,20 @@ public interface FinancialTransactionRepository
     AND t.type = 'EXPENSE'
 """)
     BigDecimal sumTotalExpense(UUID propertyId);
+
+    @Query("""
+    SELECT SUM(t.amount)
+    FROM FinancialTransaction t
+    WHERE t.property.owner.id = :userId
+    AND t.type = 'INCOME'
+""")
+    BigDecimal sumAllIncomeByUser(UUID userId);
+
+    @Query("""
+    SELECT SUM(t.amount)
+    FROM FinancialTransaction t
+    WHERE t.property.owner.id = :userId
+    AND t.type = 'EXPENSE'
+""")
+    BigDecimal sumAllExpenseByUser(UUID userId);
 }

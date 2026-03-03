@@ -3,16 +3,20 @@ package br.com.patrimonium.contract.service;
 import br.com.patrimonium.contract.dto.*;
 import br.com.patrimonium.contract.entity.ContractEntity;
 import br.com.patrimonium.contract.enums.ContractStatus;
+import br.com.patrimonium.contract.enums.ContractType;
 import br.com.patrimonium.contract.repository.ContractRepository;
 import br.com.patrimonium.person.entity.PersonEntity;
 import br.com.patrimonium.person.repository.PersonRepository;
 import br.com.patrimonium.property.repository.PropertyRepository;
+import br.com.patrimonium.transaction.entity.FinancialTransaction;
+import br.com.patrimonium.transaction.repository.FinancialTransactionRepository;
 import br.com.patrimonium.user.entity.UserEntity;
 import br.com.patrimonium.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -24,6 +28,7 @@ public class ContractService {
     private final PropertyRepository propertyRepository;
     private final PersonRepository personRepository;
     private final UserRepository userRepository;
+    private final FinancialTransactionRepository transactionRepository;
 
     private UserEntity getAuthenticatedUser() {
         var email = SecurityContextHolder.getContext()
@@ -69,6 +74,26 @@ public class ContractService {
                 .build();
 
         repository.save(contract);
+
+        if (contract.getType() == ContractType.RENTAL) {
+
+            LocalDate current = contract.getStartDate();
+
+            while (!current.isAfter(contract.getEndDate())) {
+
+                FinancialTransaction tx = FinancialTransaction.builder()
+                        .property(contract.getProperty())
+                        .amount(contract.getMonthlyValue())
+                        .type("INCOME")
+                        .transactionDate(current)
+                        .description("Rent - Contract " + contract.getId())
+                        .build();
+
+                transactionRepository.save(tx);
+
+                current = current.plusMonths(1);
+            }
+        }
 
         return toResponse(contract);
     }

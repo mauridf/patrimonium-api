@@ -1,0 +1,2 @@
+ALTER TABLE financial_transactions
+ADD COLUMN paid BOOLEAN DEFAULT FALSE;

@@ -27,6 +27,7 @@ public class PropertyController {
     private final PropertyImageService imageService;
     private final PropertyDocumentService documentService;
     private final PropertyValuationService valuationService;
+    private final PortfolioDashboardService portfolioDashboardService;
 
     @PostMapping
     public PropertyResponse create(@RequestBody PropertyCreateRequest request) {
@@ -45,6 +46,11 @@ public class PropertyController {
             @RequestParam int year) {
 
         return propertyDashboardService.getDashboard(id, month, year);
+    }
+
+    @GetMapping("/dashboard/portfolio")
+    public PortfolioDashboardResponse portfolio() {
+        return portfolioDashboardService.getDashboard();
     }
 
     @PostMapping("/{id}/images")
