@@ -1,10 +1,8 @@
 package br.com.patrimonium.property.controller;
 
 import br.com.patrimonium.property.dto.*;
-import br.com.patrimonium.property.service.PropertyDashboardService;
-import br.com.patrimonium.property.service.PropertyDocumentService;
-import br.com.patrimonium.property.service.PropertyImageService;
-import br.com.patrimonium.property.service.PropertyService;
+import br.com.patrimonium.property.entity.PropertyValuation;
+import br.com.patrimonium.property.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +11,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,6 +26,7 @@ public class PropertyController {
     private final PropertyDashboardService propertyDashboardService;
     private final PropertyImageService imageService;
     private final PropertyDocumentService documentService;
+    private final PropertyValuationService valuationService;
 
     @PostMapping
     public PropertyResponse create(@RequestBody PropertyCreateRequest request) {
@@ -71,5 +72,20 @@ public class PropertyController {
         return ResponseEntity.ok()
                 .header("Content-Disposition", "attachment; filename=" + resource.getFilename())
                 .body(resource);
+    }
+
+    @PostMapping("/{id}/valuations")
+    public void addValuation(
+            @PathVariable UUID id,
+            @RequestParam BigDecimal amount,
+            @RequestParam LocalDate date,
+            @RequestParam(required = false) String notes) {
+
+        valuationService.add(id, amount, date, notes);
+    }
+
+    @GetMapping("/{id}/valuations")
+    public List<PropertyValuation> history(@PathVariable UUID id) {
+        return valuationService.history(id);
     }
 }
