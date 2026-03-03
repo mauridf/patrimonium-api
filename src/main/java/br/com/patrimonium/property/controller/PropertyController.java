@@ -7,6 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/properties")
@@ -24,5 +25,14 @@ public class PropertyController {
     @GetMapping("/me")
     public List<PropertyResponse> myProperties() {
         return service.listMyProperties();
+    }
+
+    @GetMapping("/{id}/dashboard")
+    public PropertyDashboardDto dashboard(
+            @PathVariable UUID id,
+            @RequestParam int month,
+            @RequestParam int year) {
+
+        return propertyDashboardService.getDashboard(id, month, year);
     }
 }
