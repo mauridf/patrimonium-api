@@ -1,6 +1,7 @@
 package br.com.patrimonium.transaction.dto;
 
 import br.com.patrimonium.transaction.entity.FinancialTransaction;
+import br.com.patrimonium.transaction.enums.TransactionType;
 import lombok.Builder;
 import lombok.Data;
 
@@ -15,7 +16,7 @@ public class TransactionResponse {
     private UUID id;
     private UUID propertyId;
     private BigDecimal amount;
-    private String type;
+    private TransactionType type;
     private LocalDate transactionDate;
     private String description;
 

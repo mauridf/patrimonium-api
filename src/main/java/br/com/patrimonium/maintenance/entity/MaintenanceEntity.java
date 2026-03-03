@@ -41,6 +41,6 @@ public class MaintenanceEntity {
     @Column(name="completion_date")
     private LocalDate completionDate;
 
-    @Column(name="create_at")
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 }

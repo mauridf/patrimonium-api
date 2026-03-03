@@ -29,6 +29,7 @@ public class FinancialTransaction {
     @Column(nullable = false)
     private BigDecimal amount;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TransactionType type; // INCOME ou EXPENSE
 

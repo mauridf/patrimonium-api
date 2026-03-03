@@ -76,7 +76,7 @@ public interface FinancialTransactionRepository
     @Query("""
         SELECT t FROM FinancialTransaction t
         WHERE t.paid = false
-        AND t.dueDate < :today
+        AND t.transactionDate < :today
     """)
     List<FinancialTransaction> findOverdueTransactions(LocalDate today);
 
@@ -85,7 +85,7 @@ public interface FinancialTransactionRepository
         FROM FinancialTransaction t
         WHERE t.property.id = :propertyId
         AND t.type = 'INCOME'
-        AND t.paymentDate >= CURRENT_DATE - 180
+        AND t.paymentDate >= :startDate
     """)
     BigDecimal averageLast6Months(UUID propertyId);
 
