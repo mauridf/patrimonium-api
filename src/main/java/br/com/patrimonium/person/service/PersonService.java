@@ -2,12 +2,18 @@ package br.com.patrimonium.person.service;
 
 import br.com.patrimonium.person.dto.*;
 import br.com.patrimonium.person.entity.PersonEntity;
+import br.com.patrimonium.person.enums.PersonType;
 import br.com.patrimonium.person.repository.PersonRepository;
 import br.com.patrimonium.user.entity.UserEntity;
 import br.com.patrimonium.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import br.com.patrimonium.person.specification.PersonSpecification;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -116,5 +122,24 @@ public class PersonService {
                 person.getBirthDate(),
                 person.getActive()
         );
+    }
+
+    public Page<PersonResponse> search(
+            PersonType type,
+            String name,
+            Boolean active,
+            Pageable pageable
+    ) {
+
+        var user = getAuthenticatedUser();
+
+        Specification<PersonEntity> spec =
+                Specification.where(PersonSpecification.belongsToUser(user.getId()))
+                        .and(PersonSpecification.hasType(type))
+                        .and(PersonSpecification.hasName(name))
+                        .and(PersonSpecification.isActive(active));
+
+        return personRepository.findAll(spec, pageable)
+                .map(this::toResponse);
     }
 }

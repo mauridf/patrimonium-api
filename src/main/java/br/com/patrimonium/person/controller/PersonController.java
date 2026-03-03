@@ -1,9 +1,14 @@
 package br.com.patrimonium.person.controller;
 
 import br.com.patrimonium.person.dto.*;
+import br.com.patrimonium.person.enums.PersonType;
 import br.com.patrimonium.person.service.PersonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 
 import java.util.UUID;
 
@@ -33,5 +38,15 @@ public class PersonController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable UUID id) {
         personService.delete(id);
+    }
+
+    @GetMapping
+    public Page<PersonResponse> search(
+            @RequestParam(required = false) PersonType type,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Boolean active,
+            @PageableDefault(size = 10) Pageable pageable
+    ) {
+        return personService.search(type, name, active, pageable);
     }
 }
