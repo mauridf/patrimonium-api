@@ -1,5 +1,7 @@
 package br.com.patrimonium.transaction.service;
 
+import br.com.patrimonium.common.dto.PageResponse;
+import br.com.patrimonium.common.util.PageMapper;
 import br.com.patrimonium.property.entity.PropertyEntity;
 import br.com.patrimonium.property.repository.PropertyRepository;
 import br.com.patrimonium.property.service.PropertyFinancialCalculator;
@@ -63,7 +65,7 @@ public class FinancialTransactionService {
         return avgMonthly.multiply(BigDecimal.valueOf(12));
     }
 
-    public Page<TransactionResponse> list(
+    public PageResponse<TransactionResponse> list(
             UUID propertyId,
             int page,
             int size
@@ -75,9 +77,12 @@ public class FinancialTransactionService {
                 Sort.by(Sort.Direction.DESC, "transactionDate")
         );
 
-        return repository
-                .findByPropertyId(propertyId, pageable)
-                .map(this::toResponse);
+        Page<TransactionResponse> result =
+                repository
+                        .findByPropertyId(propertyId, pageable)
+                        .map(this::toResponse);
+
+        return PageMapper.toResponse(result);
     }
 
     private TransactionResponse toResponse(FinancialTransaction entity) {

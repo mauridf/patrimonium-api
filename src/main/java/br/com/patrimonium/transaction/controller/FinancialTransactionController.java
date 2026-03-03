@@ -1,12 +1,12 @@
 package br.com.patrimonium.transaction.controller;
 
+import br.com.patrimonium.common.dto.PageResponse;
 import br.com.patrimonium.transaction.dto.TransactionCreateRequest;
 import br.com.patrimonium.transaction.dto.TransactionResponse;
 import br.com.patrimonium.transaction.service.FinancialTransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import org.springframework.data.domain.Page;
 import java.util.UUID;
 
 @RestController
@@ -22,7 +22,7 @@ public class FinancialTransactionController {
     }
 
     @GetMapping
-    public Page<TransactionResponse> list(
+    public PageResponse<TransactionResponse> list(
             @RequestParam UUID propertyId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
