@@ -60,6 +60,10 @@ public class ContractService {
             guarantor = personRepository.findById(request.guarantorId()).orElseThrow();
         }
 
+        if (request.dueDay() < 1 || request.dueDay() > 31) {
+            throw new IllegalArgumentException("Invalid due day");
+        }
+
         var contract = ContractEntity.builder()
                 .id(UUID.randomUUID())
                 .user(user)
@@ -115,6 +119,7 @@ public class ContractService {
                 c.getStatus(),
                 c.getContractValue(),
                 c.getMonthlyValue(),
+                c.getDueDay(),
                 c.getStartDate(),
                 c.getEndDate(),
                 c.getActive()

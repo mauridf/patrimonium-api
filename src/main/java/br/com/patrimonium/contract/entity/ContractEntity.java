@@ -53,8 +53,12 @@ public class ContractEntity {
     @Column(name = "monthly_value")
     private BigDecimal monthlyValue;
 
+    @Column(name = "due_day", nullable = false)
+    private Integer dueDay;
+
     @Column(name = "start_date")
     private LocalDate startDate;
+
     @Column(name = "end_date")
     private LocalDate endDate;
 

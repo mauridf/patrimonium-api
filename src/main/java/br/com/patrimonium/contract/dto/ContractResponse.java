@@ -17,6 +17,7 @@ public record ContractResponse(
         ContractStatus status,
         BigDecimal contractValue,
         BigDecimal monthlyValue,
+        Integer dueDay,
         LocalDate startDate,
         LocalDate endDate,
         Boolean active

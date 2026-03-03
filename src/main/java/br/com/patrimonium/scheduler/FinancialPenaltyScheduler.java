@@ -1,5 +1,6 @@
 package br.com.patrimonium.scheduler;
 
+import br.com.patrimonium.contract.repository.ContractRepository;
 import br.com.patrimonium.transaction.repository.FinancialTransactionRepository;
 import br.com.patrimonium.transaction.service.FinancialTransactionService;
 import br.com.patrimonium.transaction.service.LateFeeCalculator;
@@ -18,6 +19,7 @@ public class FinancialPenaltyScheduler {
     private final FinancialTransactionRepository repository;
     private final LateFeeCalculator calculator;
     private final FinancialTransactionService transactionService;
+    private final ContractRepository contractRepository;
 
     @Scheduled(cron = "0 0 1 * * ?") // todo dia 01:00
     public void applyPenalties() {
@@ -33,11 +35,27 @@ public class FinancialPenaltyScheduler {
 
             if (daysLate <= 0) continue;
 
+            var contractOpt = contractRepository
+                    .findByPropertyIdAndActiveTrue(
+                            tx.getProperty().getId()
+                    );
+
+            if (contractOpt.isEmpty()) continue;
+
+            var contract = contractOpt.get();
+
             BigDecimal penalty =
-                    calculator.calculatePenalty(tx.getAmount());
+                    calculator.calculatePenalty(
+                            tx.getAmount(),
+                            contract.getFinePercentage()
+                    );
 
             BigDecimal interest =
-                    calculator.calculateInterest(tx.getAmount(), daysLate);
+                    calculator.calculateInterest(
+                            tx.getAmount(),
+                            contract.getInterestPercentage(),
+                            daysLate
+                    );
 
             transactionService.createPenalty(tx, penalty);
             transactionService.createInterest(tx, interest);

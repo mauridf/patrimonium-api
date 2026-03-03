@@ -14,6 +14,7 @@ public record ContractCreateRequest(
         ContractType type,
         BigDecimal contractValue,
         BigDecimal monthlyValue,
+        Integer dueDay,
         LocalDate startDate,
         LocalDate endDate,
         BigDecimal finePercentage,

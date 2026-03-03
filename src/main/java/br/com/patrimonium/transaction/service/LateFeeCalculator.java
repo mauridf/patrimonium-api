@@ -7,18 +7,37 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 @Component
-@RequiredArgsConstructor
 public class LateFeeCalculator {
 
-    public BigDecimal calculatePenalty(BigDecimal amount) {
-        return amount.multiply(BigDecimal.valueOf(0.02));
+    public BigDecimal calculatePenalty(
+            BigDecimal amount,
+            BigDecimal finePercentage
+    ) {
+
+        if (finePercentage == null) {
+            return BigDecimal.ZERO;
+        }
+
+        return amount
+                .multiply(finePercentage)
+                .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
     }
 
-    public BigDecimal calculateInterest(BigDecimal amount, long daysLate) {
+    public BigDecimal calculateInterest(
+            BigDecimal amount,
+            BigDecimal interestPercentage,
+            long daysLate
+    ) {
+
+        if (interestPercentage == null) {
+            return BigDecimal.ZERO;
+        }
+
+        BigDecimal monthlyRate =
+                interestPercentage.divide(BigDecimal.valueOf(100), 6, RoundingMode.HALF_UP);
 
         BigDecimal dailyRate =
-                BigDecimal.valueOf(0.01)
-                        .divide(BigDecimal.valueOf(30), 6, RoundingMode.HALF_UP);
+                monthlyRate.divide(BigDecimal.valueOf(30), 8, RoundingMode.HALF_UP);
 
         return amount
                 .multiply(dailyRate)

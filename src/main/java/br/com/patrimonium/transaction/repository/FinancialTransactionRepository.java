@@ -21,6 +21,13 @@ public interface FinancialTransactionRepository
 
     boolean existsByReferenceTransactionIdAndType(UUID referenceId, TransactionType type);
 
+    boolean existsByPropertyIdAndTypeAndTransactionDateBetween(
+            UUID propertyId,
+            TransactionType type,
+            LocalDate start,
+            LocalDate end
+    );
+
     @Query("""
         SELECT SUM(t.amount)
         FROM FinancialTransaction t
