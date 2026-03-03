@@ -86,6 +86,11 @@ public class PropertyEntity {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(precision = 10, scale = 6)
+    private BigDecimal roi;
+    @Column(precision = 10, scale = 6)
+    private BigDecimal yield;
+
     @PrePersist
     public void prePersist() {
         this.id = UUID.randomUUID();

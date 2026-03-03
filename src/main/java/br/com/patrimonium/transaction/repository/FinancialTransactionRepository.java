@@ -39,4 +39,20 @@ public interface FinancialTransactionRepository
             @Param("start") LocalDate start,
             @Param("end") LocalDate end
     );
+
+    @Query("""
+    SELECT SUM(t.amount)
+    FROM FinancialTransaction t
+    WHERE t.property.id = :propertyId
+    AND t.type = 'INCOME'
+""")
+    BigDecimal sumTotalIncome(UUID propertyId);
+
+    @Query("""
+    SELECT SUM(t.amount)
+    FROM FinancialTransaction t
+    WHERE t.property.id = :propertyId
+    AND t.type = 'EXPENSE'
+""")
+    BigDecimal sumTotalExpense(UUID propertyId);
 }

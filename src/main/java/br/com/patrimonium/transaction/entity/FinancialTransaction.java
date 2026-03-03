@@ -31,11 +31,12 @@ public class FinancialTransaction {
     @Column(nullable = false)
     private String type; // INCOME ou EXPENSE
 
-    @Column(nullable = false)
+    @Column(name = "transaction_date", nullable = false)
     private LocalDate transactionDate;
 
     private String description;
 
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     @PrePersist

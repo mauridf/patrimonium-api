@@ -1,0 +1,3 @@
+ALTER TABLE properties
+ADD COLUMN roi NUMERIC(10,6),
+ADD COLUMN yield NUMERIC(10,6);

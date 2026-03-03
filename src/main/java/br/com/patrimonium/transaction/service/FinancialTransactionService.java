@@ -2,7 +2,9 @@ package br.com.patrimonium.transaction.service;
 
 import br.com.patrimonium.property.entity.PropertyEntity;
 import br.com.patrimonium.property.repository.PropertyRepository;
+import br.com.patrimonium.property.service.PropertyFinancialCalculator;
 import br.com.patrimonium.transaction.dto.TransactionCreateRequest;
+import br.com.patrimonium.transaction.dto.TransactionResponse;
 import br.com.patrimonium.transaction.entity.FinancialTransaction;
 import br.com.patrimonium.transaction.repository.FinancialTransactionRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,8 +16,9 @@ public class FinancialTransactionService {
 
     private final FinancialTransactionRepository repository;
     private final PropertyRepository propertyRepository;
+    private final PropertyFinancialCalculator calculator;
 
-    public void create(TransactionCreateRequest request) {
+    public TransactionResponse create(TransactionCreateRequest request) {
 
         PropertyEntity property = propertyRepository.findById(request.getPropertyId())
                 .orElseThrow(() -> new RuntimeException("Property not found"));
@@ -29,5 +32,10 @@ public class FinancialTransactionService {
                 .build();
 
         repository.save(transaction);
+
+        calculator.recalculate(property);
+        propertyRepository.save(property);
+
+        return TransactionResponse.from(transaction);
     }
 }
