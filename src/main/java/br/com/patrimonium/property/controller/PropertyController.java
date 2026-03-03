@@ -1,6 +1,7 @@
 package br.com.patrimonium.property.controller;
 
 import br.com.patrimonium.property.dto.*;
+import br.com.patrimonium.property.service.PropertyDashboardService;
 import br.com.patrimonium.property.service.PropertyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,6 +17,7 @@ import java.util.UUID;
 public class PropertyController {
 
     private final PropertyService service;
+    private final PropertyDashboardService propertyDashboardService;
 
     @PostMapping
     public PropertyResponse create(@RequestBody PropertyCreateRequest request) {

@@ -1,0 +1,33 @@
+package br.com.patrimonium.transaction.service;
+
+import br.com.patrimonium.property.entity.PropertyEntity;
+import br.com.patrimonium.property.repository.PropertyRepository;
+import br.com.patrimonium.transaction.dto.TransactionCreateRequest;
+import br.com.patrimonium.transaction.entity.FinancialTransaction;
+import br.com.patrimonium.transaction.repository.FinancialTransactionRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class FinancialTransactionService {
+
+    private final FinancialTransactionRepository repository;
+    private final PropertyRepository propertyRepository;
+
+    public void create(TransactionCreateRequest request) {
+
+        PropertyEntity property = propertyRepository.findById(request.getPropertyId())
+                .orElseThrow(() -> new RuntimeException("Property not found"));
+
+        FinancialTransaction transaction = FinancialTransaction.builder()
+                .property(property)
+                .amount(request.getAmount())
+                .type(request.getType())
+                .transactionDate(request.getTransactionDate())
+                .description(request.getDescription())
+                .build();
+
+        repository.save(transaction);
+    }
+}
