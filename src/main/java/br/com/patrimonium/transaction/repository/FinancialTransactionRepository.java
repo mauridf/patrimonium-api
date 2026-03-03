@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 public interface FinancialTransactionRepository
@@ -71,4 +72,20 @@ public interface FinancialTransactionRepository
     AND t.type = 'EXPENSE'
 """)
     BigDecimal sumAllExpenseByUser(UUID userId);
+
+    @Query("""
+        SELECT t FROM FinancialTransaction t
+        WHERE t.paid = false
+        AND t.dueDate < :today
+    """)
+    List<FinancialTransaction> findOverdueTransactions(LocalDate today);
+
+    @Query("""
+        SELECT AVG(t.amount)
+        FROM FinancialTransaction t
+        WHERE t.property.id = :propertyId
+        AND t.type = 'INCOME'
+        AND t.paymentDate >= CURRENT_DATE - 180
+    """)
+    BigDecimal averageLast6Months(UUID propertyId);
 }

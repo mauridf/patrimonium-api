@@ -10,6 +10,9 @@ import br.com.patrimonium.transaction.repository.FinancialTransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class FinancialTransactionService {
@@ -37,5 +40,17 @@ public class FinancialTransactionService {
         propertyRepository.save(property);
 
         return TransactionResponse.from(transaction);
+    }
+
+    public BigDecimal forecastAnnualIncome(UUID propertyId) {
+
+        BigDecimal avgMonthly =
+                repository.averageLast6Months(propertyId);
+
+        if (avgMonthly == null) {
+            return BigDecimal.ZERO;
+        }
+
+        return avgMonthly.multiply(BigDecimal.valueOf(12));
     }
 }

@@ -5,6 +5,7 @@ import br.com.patrimonium.contract.entity.ContractEntity;
 import br.com.patrimonium.contract.enums.ContractStatus;
 import br.com.patrimonium.contract.enums.ContractType;
 import br.com.patrimonium.contract.repository.ContractRepository;
+import br.com.patrimonium.notification.service.NotificationService;
 import br.com.patrimonium.person.entity.PersonEntity;
 import br.com.patrimonium.person.repository.PersonRepository;
 import br.com.patrimonium.property.repository.PropertyRepository;
@@ -12,12 +13,15 @@ import br.com.patrimonium.transaction.entity.FinancialTransaction;
 import br.com.patrimonium.transaction.repository.FinancialTransactionRepository;
 import br.com.patrimonium.user.entity.UserEntity;
 import br.com.patrimonium.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -25,10 +29,11 @@ import java.util.UUID;
 public class ContractService {
 
     private final ContractRepository repository;
+    private final FinancialTransactionRepository transactionRepository;
     private final PropertyRepository propertyRepository;
     private final PersonRepository personRepository;
     private final UserRepository userRepository;
-    private final FinancialTransactionRepository transactionRepository;
+    private final NotificationService notificationService;
 
     private UserEntity getAuthenticatedUser() {
         var email = SecurityContextHolder.getContext()
@@ -113,5 +118,28 @@ public class ContractService {
                 c.getEndDate(),
                 c.getActive()
         );
+    }
+
+    @Transactional
+    public void checkDefault() {
+
+        List<FinancialTransaction> overdue =
+                transactionRepository.findOverdueTransactions(LocalDate.now());
+
+        for (FinancialTransaction tx : overdue) {
+
+            Optional<ContractEntity> contract =
+                    repository.findByPropertyIdAndActiveTrue(
+                            tx.getProperty().getId()
+                    );
+
+            contract.ifPresent(c -> {
+
+                c.setStatus(ContractStatus.DEFAULTED);
+                repository.save(c);
+
+                notificationService.sendDefaultNotification(c);
+            });
+        }
     }
 }

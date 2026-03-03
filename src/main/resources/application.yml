@@ -5,6 +5,18 @@ spring:
   application:
     name: patrimonium
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: seu_email@gmail.com
+    password: sua_senha_app
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
   datasource:
     url: jdbc:postgresql://localhost:5432/patrimonium
     username: postgres

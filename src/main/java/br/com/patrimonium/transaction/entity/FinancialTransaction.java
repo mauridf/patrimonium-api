@@ -1,6 +1,7 @@
 package br.com.patrimonium.transaction.entity;
 
 import br.com.patrimonium.property.entity.PropertyEntity;
+import br.com.patrimonium.transaction.enums.TransactionType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,10 +30,13 @@ public class FinancialTransaction {
     private BigDecimal amount;
 
     @Column(nullable = false)
-    private String type; // INCOME ou EXPENSE
+    private TransactionType type; // INCOME ou EXPENSE
 
     @Column(name = "transaction_date", nullable = false)
     private LocalDate transactionDate;
+
+    @Column(name = "payment_date", nullable = false)
+    private LocalDate paymentDate;
 
     private String description;
 
