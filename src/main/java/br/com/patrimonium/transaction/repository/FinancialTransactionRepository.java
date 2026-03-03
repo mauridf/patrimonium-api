@@ -50,14 +50,6 @@ public interface FinancialTransactionRepository
     SELECT SUM(t.amount)
     FROM FinancialTransaction t
     WHERE t.property.id = :propertyId
-    AND t.type = 'INCOME'
-""")
-    BigDecimal sumTotalIncome(UUID propertyId);
-
-    @Query("""
-    SELECT SUM(t.amount)
-    FROM FinancialTransaction t
-    WHERE t.property.id = :propertyId
     AND t.type = 'EXPENSE'
 """)
     BigDecimal sumTotalExpense(UUID propertyId);
@@ -101,4 +93,32 @@ public interface FinancialTransactionRepository
     AND m.status = 'DONE'
 """)
     BigDecimal sumByProperty(UUID propertyId);
+
+    @Query("""
+    SELECT COALESCE(SUM(t.amount), 0)
+    FROM FinancialTransaction t
+    WHERE t.property.id = :propertyId
+    AND t.type = br.com.patrimonium.transaction.enums.TransactionType.INCOME
+    AND t.transactionDate >= :start
+    AND t.transactionDate < :end
+""")
+    BigDecimal sumMonthlyIncome(UUID propertyId, LocalDate start, LocalDate end);
+
+    @Query("""
+    SELECT COALESCE(SUM(t.amount), 0)
+    FROM FinancialTransaction t
+    WHERE t.property.id = :propertyId
+    AND t.type = br.com.patrimonium.transaction.enums.TransactionType.EXPENSE
+    AND t.transactionDate >= :start
+    AND t.transactionDate < :end
+""")
+    BigDecimal sumMonthlyExpense(UUID propertyId, LocalDate start, LocalDate end);
+
+    @Query("""
+    SELECT COALESCE(SUM(t.amount), 0)
+    FROM FinancialTransaction t
+    WHERE t.property.id = :propertyId
+    AND t.type = br.com.patrimonium.transaction.enums.TransactionType.INCOME
+""")
+    BigDecimal sumTotalIncome(UUID propertyId);
 }
