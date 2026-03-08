@@ -25,38 +25,46 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain)
-            throws ServletException, IOException {
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
+    ) throws ServletException, IOException {
 
         String header = request.getHeader("Authorization");
 
-        if (header != null && header.startsWith("Bearer ")) {
-            String token = header.substring(7);
+        // 🔑 Se não tem token → deixa passar
+        if (header == null || !header.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-            try {
-                Claims claims = jwtService.validateToken(token);
-                String email = claims.get("email", String.class);
-                String role = claims.get("role", String.class);
+        String token = header.substring(7);
 
-                var userDetails = userDetailsService.loadUserByUsername(email);
-                var authorities = List.of(
-                        new SimpleGrantedAuthority("ROLE_" + role)
-                );
+        try {
 
-                var auth = new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        authorities
-                );
+            Claims claims = jwtService.validateToken(token);
 
-                SecurityContextHolder.getContext().setAuthentication(auth);
+            String email = claims.get("email", String.class);
+            String role = claims.get("role", String.class);
 
-            } catch (Exception e) {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                return;
-            }
+            var userDetails = userDetailsService.loadUserByUsername(email);
+
+            var authorities = List.of(
+                    new SimpleGrantedAuthority("ROLE_" + role)
+            );
+
+            var auth = new UsernamePasswordAuthenticationToken(
+                    userDetails,
+                    null,
+                    authorities
+            );
+
+            SecurityContextHolder.getContext().setAuthentication(auth);
+
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
         }
 
         filterChain.doFilter(request, response);

@@ -1,5 +1,7 @@
 package br.com.patrimonium.maintenance.service;
 
+import br.com.patrimonium.maintenance.dto.CreateMaintenanceRequest;
+import br.com.patrimonium.maintenance.dto.MaintenanceResponse;
 import br.com.patrimonium.maintenance.entity.MaintenanceEntity;
 import br.com.patrimonium.maintenance.enums.MaintenanceStatus;
 import br.com.patrimonium.maintenance.repository.MaintenanceRepository;
@@ -8,9 +10,9 @@ import br.com.patrimonium.property.service.PropertyFinancialCalculator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -21,29 +23,47 @@ public class MaintenanceService {
     private final PropertyRepository propertyRepository;
     private final PropertyFinancialCalculator calculator;
 
-    public void create(UUID propertyId, String title,
-                       String description,
-                       BigDecimal cost) {
+    public MaintenanceResponse create(CreateMaintenanceRequest request) {
 
-        var property = propertyRepository.findById(propertyId)
-                .orElseThrow();
+        var property = propertyRepository.findById(
+                UUID.fromString(request.getPropertyId())
+        ).orElseThrow();
 
         var maintenance = MaintenanceEntity.builder()
                 .id(UUID.randomUUID())
                 .property(property)
-                .title(title)
-                .description(description)
-                .cost(cost)
+                .title(request.getDescription())
+                .description(request.getDescription())
+                .cost(request.getCost())
                 .status(MaintenanceStatus.OPEN)
-                .openDate(LocalDate.now())
+                .openDate(request.getOpenDate())
+                .completionDate(request.getCompletionDate())
                 .createdAt(LocalDateTime.now())
                 .build();
 
         repository.save(maintenance);
 
-        // Impacta no ROI
+        // recalcula ROI do imóvel
         calculator.recalculate(property);
         propertyRepository.save(property);
+
+        return toResponse(maintenance);
+    }
+
+    public List<MaintenanceResponse> findAll() {
+
+        return repository.findAll()
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    public MaintenanceResponse findById(String id) {
+
+        var maintenance = repository.findById(UUID.fromString(id))
+                .orElseThrow();
+
+        return toResponse(maintenance);
     }
 
     public void complete(UUID id) {
@@ -54,5 +74,20 @@ public class MaintenanceService {
         maintenance.setCompletionDate(LocalDate.now());
 
         repository.save(maintenance);
+    }
+
+    private MaintenanceResponse toResponse(MaintenanceEntity entity) {
+
+        var response = new MaintenanceResponse();
+
+        response.setId(entity.getId().toString());
+        response.setPropertyId(entity.getProperty().getId().toString());
+        response.setDescription(entity.getDescription());
+        response.setCost(entity.getCost());
+        response.setOpenDate(entity.getOpenDate());
+        response.setCompletionDate(entity.getCompletionDate());
+        response.setStatus(null);
+
+        return response;
     }
 }

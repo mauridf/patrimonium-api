@@ -3,6 +3,7 @@ package br.com.patrimonium.config;
 import br.com.patrimonium.auth.jwt.JwtFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
@@ -30,13 +31,19 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
 
                         // Actuator
-                        .requestMatchers("/actuator/**").permitAll()
+                        //.requestMatchers("/actuator/**").permitAll()
 
                         // Auth
                         .requestMatchers("/api/v1/auth/**").permitAll()
 
                         // User create
-                        .requestMatchers("/api/v1/users").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/users").permitAll()
+
+                        // Properties
+                        .requestMatchers("/api/v1/properties/**").permitAll()
+
+                        // Dashboard
+                        .requestMatchers("/api/v1/dashboard").permitAll()
 
                         .anyRequest().authenticated()
                 )

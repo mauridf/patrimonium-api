@@ -5,12 +5,14 @@ import br.com.patrimonium.transaction.dto.TransactionCreateRequest;
 import br.com.patrimonium.transaction.dto.TransactionResponse;
 import br.com.patrimonium.transaction.service.FinancialTransactionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/transactions")
+@PreAuthorize("hasAnyRole('ADMIN','OWNER','USER')")
 @RequiredArgsConstructor
 public class FinancialTransactionController {
 

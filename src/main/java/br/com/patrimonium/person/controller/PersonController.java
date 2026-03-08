@@ -4,6 +4,7 @@ import br.com.patrimonium.person.dto.*;
 import br.com.patrimonium.person.enums.PersonType;
 import br.com.patrimonium.person.service.PersonService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.data.domain.Page;
@@ -14,6 +15,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/persons")
+@PreAuthorize("hasAnyRole('ADMIN','OWNER','USER')")
 @RequiredArgsConstructor
 public class PersonController {
 
