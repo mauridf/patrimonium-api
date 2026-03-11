@@ -1,5 +1,6 @@
 package br.com.patrimonium.property.service;
 
+import br.com.patrimonium.property.dto.PropertyDocumentResponse;
 import br.com.patrimonium.property.entity.PropertyDocument;
 import br.com.patrimonium.property.entity.PropertyEntity;
 import br.com.patrimonium.property.repository.PropertyDocumentRepository;
@@ -12,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -55,5 +57,19 @@ public class PropertyDocumentService {
                 .orElseThrow(() -> new RuntimeException("Document not found"));
 
         return new UrlResource(new File(doc.getFilePath()).toURI());
+    }
+
+    public List<PropertyDocumentResponse> listByProperty(UUID propertyId) {
+
+        return repository.findByPropertyId(propertyId)
+                .stream()
+                .map(doc -> new PropertyDocumentResponse(
+                        doc.getId(),
+                        doc.getFileName(),
+                        doc.getDocumentType(),
+                        "/api/v1/properties/documents/" + doc.getId(),
+                        doc.getContentType()
+                ))
+                .toList();
     }
 }

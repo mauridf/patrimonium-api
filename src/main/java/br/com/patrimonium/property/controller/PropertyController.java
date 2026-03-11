@@ -28,6 +28,7 @@ public class PropertyController {
     private final PropertyDocumentService documentService;
     private final PropertyValuationService valuationService;
     private final PortfolioDashboardService portfolioDashboardService;
+    private final PropertyService propertyService;
 
     @PostMapping
     public PropertyResponse create(@RequestBody PropertyCreateRequest request) {
@@ -93,5 +94,34 @@ public class PropertyController {
     @GetMapping("/{id}/valuations")
     public List<PropertyValuation> history(@PathVariable UUID id) {
         return valuationService.history(id);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PropertyResponse> getPropertyById(
+            @PathVariable UUID id
+    ) {
+        return ResponseEntity.ok(propertyService.getPropertyById(id));
+    }
+
+    @GetMapping("/{id}/images")
+    public List<PropertyImageResponse> listImages(@PathVariable UUID id) {
+        return imageService.listByProperty(id);
+    }
+
+    @GetMapping("/images/{imageId}")
+    public ResponseEntity<Resource> viewImage(@PathVariable UUID imageId) throws Exception {
+
+        Resource resource = imageService.getImage(imageId);
+
+        return ResponseEntity.ok()
+                .header("Content-Type", "image/jpeg")
+                .body(resource);
+    }
+
+    @GetMapping("/{propertyId}/documents")
+    public List<PropertyDocumentResponse> listDocuments(
+            @PathVariable UUID propertyId
+    ) {
+        return documentService.listByProperty(propertyId);
     }
 }

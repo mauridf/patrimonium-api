@@ -1,15 +1,20 @@
 package br.com.patrimonium.property.service;
 
+import br.com.patrimonium.property.dto.PropertyImageResponse;
 import br.com.patrimonium.property.entity.PropertyEntity;
 import br.com.patrimonium.property.entity.PropertyImage;
 import br.com.patrimonium.property.repository.PropertyImageRepository;
 import br.com.patrimonium.property.repository.PropertyRepository;
+import org.springframework.core.io.Resource;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -44,5 +49,26 @@ public class PropertyImageService {
                 .build();
 
         imageRepository.save(image);
+    }
+
+    public List<PropertyImageResponse> listByProperty(UUID propertyId) {
+
+        return imageRepository.findByPropertyId(propertyId)
+                .stream()
+                .map(img -> new PropertyImageResponse(
+                        img.getId(),
+                        img.getFileName(),
+                        "/api/v1/properties/images/" + img.getId(),
+                        img.getContentType()
+                ))
+                .toList();
+    }
+
+    public Resource getImage(UUID imageId) throws MalformedURLException {
+
+        var image = imageRepository.findById(imageId)
+                .orElseThrow(() -> new RuntimeException("Image not found"));
+
+        return new UrlResource(new File(image.getFilePath()).toURI());
     }
 }

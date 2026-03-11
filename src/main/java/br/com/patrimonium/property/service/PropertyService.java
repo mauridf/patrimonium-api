@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -73,12 +74,28 @@ public class PropertyService {
     }
 
     public List<PropertyResponse> listMyProperties() {
+
         UserEntity user = getLoggedUser();
 
         return repository.findByOwnerId(user.getId())
                 .stream()
                 .map(this::map)
                 .toList();
+    }
+
+    public PropertyResponse getPropertyById(UUID id) {
+
+        UserEntity user = getLoggedUser();
+
+        PropertyEntity property = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Property not found"));
+
+        // segurança: garante que o imóvel pertence ao usuário
+        if (!property.getOwner().getId().equals(user.getId())) {
+            throw new RuntimeException("Access denied");
+        }
+
+        return map(property);
     }
 
     private PropertyResponse map(PropertyEntity p) {
